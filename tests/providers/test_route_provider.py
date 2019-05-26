@@ -243,6 +243,18 @@ class TestRouteProvider:
         assert self.app.make('Request').path == 'test/middleware/before/ran'
         assert self.app.make('Request').attribute == True
 
+    def test_param_with_slash_in_route(self):
+        self.app.make('Route').url = '/test/masoniteproject.com/test'
+        self.app.bind('WebRoutes', [get('/test/@url', ControllerTest.test)])
+
+        self.provider.boot(
+            self.app.make('Route'),
+            self.app.make('Request'),
+            self.app.make(Response)
+        )
+
+        assert self.app.make('Request').param('url') == 'masoniteproject.com/test'
+
 
 class Middleware:
 
