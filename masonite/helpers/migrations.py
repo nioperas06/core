@@ -86,7 +86,7 @@ class Migrations(HasColoredCommands):
         else:
             manager.begin_transaction()
 
-    def rollback(self, manager=None):
+    def end_transaction(self, manager=None):
         if not manager:
             from config.database import DB
             DB.rollback()

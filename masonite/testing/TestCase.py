@@ -76,12 +76,12 @@ class TestCase(unittest.TestCase):
         self.__class__._transaction = True
 
     def stopTransaction(self):
-        Migrations().rollback(self.manager)
+        Migrations().end_transaction(self.manager)
         self.__class__._transaction = False
 
     @classmethod
     def staticStopTransaction(cls):
-        Migrations().rollback(cls.manager)
+        Migrations().end_transaction(cls.manager)
         cls._transaction = False
 
     def make(self, model, factory, amount=50):
