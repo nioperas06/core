@@ -230,7 +230,7 @@ class TestCase(unittest.TestCase):
             from config import database
             self.__class__.manager = database.DB
         except ModuleNotFoundError:
-            from orator import DatabaseManager, Schema
+            from orator import DatabaseManager
 
             config = {
                 'default': 'sqlite',
