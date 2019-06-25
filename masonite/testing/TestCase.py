@@ -228,7 +228,7 @@ class TestCase(unittest.TestCase):
     def startManager(self):
         try:
             from config import database
-            self.manager = database.DB
+            self.__class__.manager = database.DB
         except ModuleNotFoundError:
             from orator import DatabaseManager, Schema
 
