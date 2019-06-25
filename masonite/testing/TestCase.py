@@ -9,6 +9,7 @@ from masonite.helpers.routes import flatten_routes, create_matchurl
 from masonite.helpers.migrations import Migrations
 from masonite.testsuite import generate_wsgi
 from orator.orm import Factory
+from masonite.environment import LoadEnvironment
 
 from .MockRoute import MockRoute
 
@@ -19,16 +20,27 @@ class TestCase(unittest.TestCase):
     transactions = True
     refreshes_database = False
     _transaction = False
+    _run_database = True
+    manager = False
 
     def setUp(self):
-        from wsgi import container
-        self.container = container
         self.acting_user = False
         self.factory = Factory()
+        self.startManager()
         self.withoutExceptionHandling()
         self.withoutCsrf()
+        try:
+            from wsgi import container
+            self.container = container
+        except ModuleNotFoundError:
+            self._run_database = False
+
         if not self._transaction:
             self.startTransaction()
+            if hasattr(self, 'setUpSchemas'):
+                LoadEnvironment()
+                self.setUpSchemas()
+
             if hasattr(self, 'setUpFactories'):
                 self.setUpFactories()
 
@@ -60,19 +72,16 @@ class TestCase(unittest.TestCase):
             self.setUpDatabase()
 
     def startTransaction(self):
-        from config.database import DB
-        DB.begin_transaction()
+        Migrations().begin_transaction(self.__class__.manager)
         self.__class__._transaction = True
 
     def stopTransaction(self):
-        from config.database import DB
-        DB.rollback()
+        Migrations().rollback(self.manager)
         self.__class__._transaction = False
 
     @classmethod
     def staticStopTransaction(cls):
-        from config.database import DB
-        DB.rollback()
+        Migrations().rollback(cls.manager)
         cls._transaction = False
 
     def make(self, model, factory, amount=50):
@@ -215,3 +224,29 @@ class TestCase(unittest.TestCase):
         column = schema.split('.')[1]
 
         self.assertFalse(DB.table(table).where(column, value).first())
+
+    def startManager(self):
+        try:
+            from config import database
+            self.manager = database.DB
+        except ModuleNotFoundError:
+            from orator import DatabaseManager, Schema
+
+            config = {
+                'default': 'sqlite',
+                'sqlite': {
+                    'driver': 'sqlite',
+                    'database': 'test.db'
+                }
+            }
+
+            self.__class__.manager = DatabaseManager(config)
+
+    def schema(self, table):
+        import orator
+        schema = orator.Schema(self.__class__.manager)
+        try:
+            schema.drop(table)
+        except orator.exceptions.query.QueryException:
+            pass
+        return schema.create(table)

@@ -17,6 +17,11 @@ class TestUnitTest(TestCase):
             'email': 'user@example.com',
             'password': 'secret'
         })
+    
+    def setUpSchemas(self):
+        with self.schema('posts') as table:
+            table.increments('id')
+            table.string('name')
 
     def test_can_get_route(self):
         self.assertTrue(self.get('/unit/test/get').ok())

@@ -10,7 +10,11 @@ class Migrations(HasColoredCommands):
     def __init__(self):
         self._ran = []
         self._notes = []
-        from config import database
+        try:
+            from config import database
+        except ModuleNotFoundError:
+            self.migration_directories = []
+            return
         self.repository = DatabaseMigrationRepository(database.DB, 'migrations')
         self.migrator = Migrator(self.repository, database.DB)
         if not self.repository.repository_exists():
@@ -75,6 +79,19 @@ class Migrations(HasColoredCommands):
     def ran(self):
         return self._ran
 
+    def begin_transaction(self, manager=None):
+        if not manager:
+            from config.database import DB
+            DB.begin_transaction()
+        else:
+            manager.begin_transaction()
+
+    def rollback(self, manager=None):
+        if not manager:
+            from config.database import DB
+            DB.rollback()
+        else:
+            manager.rollback()
 
 def has_unmigrated_migrations():
     if not config('application.debug'):
