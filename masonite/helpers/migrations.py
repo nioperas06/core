@@ -93,6 +93,7 @@ class Migrations(HasColoredCommands):
         else:
             manager.rollback()
 
+
 def has_unmigrated_migrations():
     if not config('application.debug'):
         return False
