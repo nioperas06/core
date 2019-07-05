@@ -33,9 +33,6 @@ jobs:
         - git clone https://github.com/masoniteframework/validation
         - cd validation && pip install -e . && python -m pytest
 
-script:
-- make ci
-
 deploy:
   provider: pypi
   user: josephmancuso
