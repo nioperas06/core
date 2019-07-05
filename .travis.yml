@@ -35,7 +35,7 @@ jobs:
       name: "Masonite Essentials"
       script:
         - git clone https://github.com/masoniteframework/essentials
-        - cd essentials && pip install -e . && pip install -r requirements.txt && python -m pytest
+        - cd essentials && pip install -e . && python -m pytest
 
 
 deploy:
