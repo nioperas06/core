@@ -1,6 +1,5 @@
 language: python
 
-cache: pip
 jobs:
   include:
     # - stage: test
