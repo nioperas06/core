@@ -5,28 +5,28 @@ install: "make"
 cache: pip
 jobs:
   include:
-    - stage: test
-      script:
-        - make ci
-      python: '3.4'
-    - stage: test
-      script:
-        - make ci
-      python: '3.5'
-    - stage: test
-      script:
-        - make ci
-      python: '3.6'
-    - stage: test
-      script:
-        - make ci
-      python: '3.7'
-      dist: xenial   
-    - stage: coverage
-      python: '3.6'
-      script: 
-        - make coverage
-        - coveralls && make deepsource
+    # - stage: test
+    #   script:
+    #     - make ci
+    #   python: '3.4'
+    # - stage: test
+    #   script:
+    #     - make ci
+    #   python: '3.5'
+    # - stage: test
+    #   script:
+    #     - make ci
+    #   python: '3.6'
+    # - stage: test
+    #   script:
+    #     - make ci
+    #   python: '3.7'
+    #   dist: xenial   
+    # - stage: coverage
+    #   python: '3.6'
+    #   script: 
+    #     - make coverage
+    #     - coveralls && make deepsource
     - stage: Packages
       name: "Masonite Validation"
       script:
