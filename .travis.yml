@@ -31,7 +31,7 @@ jobs:
       name: "Masonite Validation"
       script:
         - git clone https://github.com/masoniteframework/validation
-        - cd validation && pip install -r requirements.txt && pip install -e . && python -m pytest
+        - cd validation && pip install -e . && python -m pytest
 
 script:
 - make ci
