@@ -2,10 +2,10 @@ language: python
 
 jobs:
   include:
-    # - stage: test
-    #   script:
-    #     - make ci
-    #   python: '3.4'
+    - stage: test
+      script:
+        - make ci
+      python: '3.4'
     # - stage: test
     #   script:
     #     - make ci
