@@ -27,6 +27,8 @@ jobs:
       script: 
         - make coverage
         - coveralls && make deepsource
+    - stage: Packages
+      script: travis restart -r masoniteframework/validation
 
 script:
 - make ci
