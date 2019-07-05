@@ -30,6 +30,10 @@ jobs:
       script:
         - git clone https://github.com/masoniteframework/validation
         - cd validation && pip install -r requirements.txt && pip install -e . && python -m pytest
+      name: "Masonite Essentials"
+      script:
+        - git clone https://github.com/masoniteframework/essentials
+        - cd essentials && pip install -r requirements.txt && pip install -e . && python -m pytest
 
 
 deploy:
