@@ -20,16 +20,19 @@ jobs:
     #     - make ci
     #   python: '3.7'
     #   dist: xenial   
-    # - stage: coverage
-    #   python: '3.6'
-    #   script: 
-    #     - make coverage
-    #     - coveralls && make deepsource
+    - stage: coverage
+      python: '3.6'
+      script: 
+        - make coverage
+        - coveralls && make deepsource
     - stage: Packages
       name: "Masonite Validation"
+      python: '3.6'
       script:
         - git clone https://github.com/masoniteframework/validation
         - cd validation && pip install -r requirements.txt && pip install -e . && python -m pytest
+    - stage: Packages
+      python: '3.6'
       name: "Masonite Essentials"
       script:
         - git clone https://github.com/masoniteframework/essentials
