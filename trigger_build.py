@@ -1,16 +1,28 @@
 import requests
 import time
 import os
+import argparse
+parser = argparse.ArgumentParser()
 
-r = requests.post('https://circleci.com/api/v1/project/masoniteframework/validation/tree/circle-ci?circle-token={}'.format(os.getenv('CIRCLE_TOKEN')))
+#-db DATABSE -u USERNAME -p PASSWORD -size 20
+parser.add_argument("-r", "--repo", help="Repository name")
+parser.add_argument("-b", "--branch", help="Branch name")
+parser.add_argument("-t", "--token", help="Circle CI Token")
+
+args = parser.parse_args()
+
+repo = args.repo
+branch = args.branch or 'master'
+token = args.token or os.getenv('CIRCLE_TOKEN')
+r = requests.post('https://circleci.com/api/v1/project/{}/tree/{}?circle-token={}'.format(repo, branch, token))
 print('Building: ', r.json()['build_num'])
 
-status = requests.get('https://circleci.com/api/v1.1/project/github/masoniteframework/validation/{}?circle-token={}'.format(r.json()['build_num'], os.getenv('CIRCLE_TOKEN')))
+status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
 print('Build Status: ', status.json()['lifecycle'])
 while status.json()['lifecycle'] != 'finished':
-    print('Build Status: ', status.json()['lifecycle'])
     time.sleep(3)
-    status = requests.get('https://circleci.com/api/v1.1/project/github/masoniteframework/validation/{}?circle-token={}'.format(r.json()['build_num'], os.getenv('CIRCLE_TOKEN')))
+    print('Build Status: ', status.json()['lifecycle'])
+    status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
 
 print('Finished. Failed? ', status.json()['failed'])
 if status.json()['failed']:
