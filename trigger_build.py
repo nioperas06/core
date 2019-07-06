@@ -26,23 +26,23 @@ for argument in args.build or []:
     parameters.update({key: value})
 
 build_parameters = {'build_parameters': parameters}
-print(build_parameters)
-exit
 
-# r = requests.post('https://circleci.com/api/v1/project/{}/tree/{}?circle-token={}'.format(repo, branch, token))
+r = requests.post('https://circleci.com/api/v1/project/{}/tree/{}?circle-token={}'.format(repo, branch, token), json=build_parameters)
 
-# if 'build_num' not in r.json():
-#     print('ERROR: Could not find repository {} or with the branch {}'.format(repo, branch))
+if 'build_num' not in r.json():
+    print('ERROR: Could not find repository {} or with the branch {}'.format(repo, branch))
+    print(r.json())
+    exit()
 
-# print('Building: ', r.json()['build_num'])
+print('Building: ', r.json()['build_num'])
 
-# status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
-# print('Build Status: ', status.json()['lifecycle'])
-# while status.json()['lifecycle'] != 'finished':
-#     time.sleep(3)
-#     print('Build Status: ', status.json()['lifecycle'])
-#     status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
+status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
+print('Build Status: ', status.json()['lifecycle'])
+while status.json()['lifecycle'] != 'finished':
+    time.sleep(3)
+    print('Build Status: ', status.json()['lifecycle'])
+    status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
 
-# print('Finished. Failed? ', status.json()['failed'])
-# if status.json()['failed']:
-#     exit(1)
+print('Finished. Failed? ', status.json()['failed'])
+if status.json()['failed']:
+    exit(1)

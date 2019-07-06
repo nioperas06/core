@@ -33,7 +33,7 @@ jobs:
         - image: circleci/python:3.6
       steps:
         - checkout
-        - run: python trigger_build.py --repo masoniteframework/validation --branch circle-ci --build DEPENDENT_BRANCH=master
+        - run: python trigger_build.py --repo masoniteframework/validation --branch circle-ci --build MASONITE_DEPENDENT_BRANCH=$CIRCLE_BRANCH
 
 workflows: 
   version: 2
