@@ -15,6 +15,10 @@ repo = args.repo
 branch = args.branch or 'master'
 token = args.token or os.getenv('CIRCLE_TOKEN')
 r = requests.post('https://circleci.com/api/v1/project/{}/tree/{}?circle-token={}'.format(repo, branch, token))
+
+if 'build_num' not in r.json():
+    print('ERROR: Could not find repository {} or with the branch {}'.format(repo, branch))
+
 print('Building: ', r.json()['build_num'])
 
 status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))

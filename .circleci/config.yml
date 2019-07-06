@@ -33,7 +33,7 @@ jobs:
         - image: circleci/python:3.6
       steps:
         - checkout
-        - run: python trigger_build.py --repo masonite/validation --branch circle-ci
+        - run: python trigger_build.py --repo masoniteframework/validation --branch circle-ci
 
 workflows: 
   version: 2
