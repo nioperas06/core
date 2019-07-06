@@ -28,6 +28,12 @@ jobs:
         - checkout
         - run: make
         - run: make ci
+    Masonite Validation:
+      docker:
+        - image: circleci/python:3.6
+      steps:
+        - checkout
+        - run: python trigger_build.py
 
 workflows: 
   version: 2
