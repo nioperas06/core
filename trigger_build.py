@@ -42,11 +42,17 @@ parser.add_argument("-r", "--repo", help="Repository name")
 parser.add_argument("-b", "--branch", help="Branch name")
 parser.add_argument("-t", "--token", help="Circle CI Token")
 parser.add_argument('-a', '--build', action='append', help='Set Build Arguments')
+parser.add_argument('-p', '--poll', help='How long the script should sleep before checking status')
 args = parser.parse_args()
 
 repo = args.repo
 branch = args.branch or 'master'
 token = args.token or os.getenv('CIRCLE_TOKEN')
+poll = args.poll or 5
+
+if os.getenv('CIRCLE_PR_NUMBER'):
+    repo = os.getenv('CIRCLE_PR_USERNAME') + '/' + os.getenv('CIRCLE_PR_REPONAME')
+    branch = os.getenv('CIRCLE_BRANCH')
 
 parameters = {}
 for argument in args.build or []:
@@ -72,7 +78,7 @@ print('Building: ', r.json()['build_num'])
 status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
 print('Build Status: ', status.json()['lifecycle'])
 while status.json()['lifecycle'] != 'finished':
-    time.sleep(3)
+    time.sleep(poll)
     print('Build Status: ', status.json()['lifecycle'])
     status = requests.get('https://circleci.com/api/v1.1/project/github/{}/{}?circle-token={}'.format(repo, r.json()['build_num'], token))
 
