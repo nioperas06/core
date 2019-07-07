@@ -13,7 +13,7 @@ deepsource:
 	curl https://deepsource.io/cli | sh
 	./bin/deepsource report --analyzer test-coverage --key python --value-file ./coverage.xml
 coverage:
-	pytest --cov-report term --cov-report xml --cov=masonite tests/
+	python -m pytest --cov-report term --cov-report xml --cov=masonite tests/
 publish:
 	pip install 'twine>=1.5.0'
 	python setup.py sdist bdist_wheel
