@@ -53,6 +53,7 @@ poll = args.poll or 5
 if os.getenv('CIRCLE_PR_NUMBER'):
     repo = os.getenv('CIRCLE_PR_USERNAME') + '/' + os.getenv('CIRCLE_PR_REPONAME')
     branch = os.getenv('CIRCLE_BRANCH')
+    print('Pull Request #{} Detected. Changing build repo to: {} and branch to {}'.format(os.getenv('CIRCLE_PR_NUMBER'), repo, branch))
 
 parameters = {}
 for argument in args.build or []:
