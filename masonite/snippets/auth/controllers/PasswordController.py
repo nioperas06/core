@@ -2,11 +2,12 @@
 
 import uuid
 
-from masonite import env, Mail, Session
 from masonite.auth import Auth
-from masonite.helpers import password as bcrypt_password
-from masonite.request import Request
 from masonite.view import View
+from masonite.request import Request
+from masonite import env, Mail, Session
+from masonite.validation import Validator
+from masonite.helpers import password as bcrypt_password
 
 from config.auth import AUTH
 
@@ -23,7 +24,18 @@ class PasswordController:
         if user:
             return view('auth/reset', {'token': token, 'app': request.app().make('Application'), 'Auth': auth})
 
-    def send(self, request: Request, session: Session, mail: Mail):
+    def send(self, request: Request, session: Session, mail: Mail, validate: Validator):
+        # Retrieve the old email value
+        request.session.flash('email', request.input('email', ''))
+
+        errors = request.validate(
+            validate.required('email'),
+            validate.email('email')
+        )
+
+        if errors:
+            return request.back().with_errors(errors)
+
         email = request.input('email')
         user = AUTH['model'].where('email', email).first()
 
@@ -31,12 +43,12 @@ class PasswordController:
             if not user.remember_token:
                 user.remember_token = str(uuid.uuid4())
                 user.save()
-            message = 'Please visit {}/password/{}/reset to reset your password'.format(env('SITE', 'http://localhost:8000'), user.remember_token)
-            mail.subject('Reset Password Instructions').to(email).send(message)
+            reset_link = '{}/password/{}/reset'.format(env('SITE', 'http://localhost:8000'), user.remember_token)
+            mail.subject('Reset Password Instructions').to(email).template('mail/reset-password', {'reset_link': reset_link}).send()
             session.flash('success', 'Email sent. Follow the instruction in the email to reset your password.')
             return request.redirect('/password')
         else:
-            session.flash('error', 'Could not send reset email. Please enter correct email.')
+            session.flash('error', "We can't find a user with that e-mail address.")
             return request.redirect('/password')
 
     def update(self, request: Request):

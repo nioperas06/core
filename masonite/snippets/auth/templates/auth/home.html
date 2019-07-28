@@ -1,10 +1,17 @@
 {% extends 'auth/base.html' %}
 
 {% block content %}
-<div class="row">
-    <div class="cover-container d-flex h-100 p-3 mx-auto my-5 flex-column">
-        <h1 class="cover-heading">Dashboard</h1>
-        <p class="lead">This is a dashboard. Hello <strong>{{ auth().name }}</strong></p>
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Dashboard</div>
+
+                <div class="card-body">
+                    You are logged in!
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 {% endblock %}

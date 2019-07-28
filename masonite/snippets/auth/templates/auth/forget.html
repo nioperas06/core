@@ -1,34 +1,46 @@
 {% extends 'auth/base.html' %}
 
 {% block content %}
-<div class="row my-5">
-    <div class="col-md-12">
-        <div class="row">
-            <div class="col-md-6 mx-auto">
-                {% if session().has('error') %}
-                <div class="alert alert-danger" role="alert">
-                    {{ session().get('error') }}
-                </div>
-                {% endif %}
-                {% if session().has('success') %}
-                <div class="alert alert-success" role="alert">
-                    {{ session().get('success') }}
-                </div>
-                {% endif %}
-                <div class="card rounded-1">
-                    <div class="card-header">
-                        <h5 class="mb-0">Password Reset</h5>
-                    </div>
-                    <div class="card-body">
-                        <form class="form" action="/password" method="POST">
-                            {{ csrf_field }}
-                            <div class="form-group">
-                                <label for="">Email</label>
-                                <input type="text" class="form-control form-control-md rounded-0" name="email">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header">Reset Password</div>
+
+                <div class="card-body">
+                    {% if session().get('success') %}
+                        <div class="alert alert-success" role="alert">
+                            {{ session().get('success') }}
+                        </div>
+                    {% endif %}
+                    <form action="/password" method="POST">
+                        {{ csrf_field }}
+                        <div class="form-group row">
+                            <label for="email" class="col-md-4 col-form-label text-md-right">E-Mail Address</label>
+
+                            <div class="col-md-6">
+                                <input id="email" type="email" class="form-control {% if session().get('error') or session().get('errors')['email'] %} is-invalid {% endif %}" name="email" value="{% if session().has('email') %}{{ session().get('email') }}{% endif %}" required autocomplete="email" autofocus>
+                                {% if session().get('errors')['email'] %}
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ session().get('errors')['email'] | first }}</strong>
+                                    </span>
+                                {% endif %}
+                                {% if session().get('error') %}
+                                    <span class="invalid-feedback" role="alert">
+                                        <strong>{{ session().get('error') }}</strong>
+                                    </span>
+                                {% endif %}
                             </div>
-                            <button type="submit" class="btn btn-success btn-md float-right">Send reset link</button>
-                        </form>
-                    </div>
+                        </div>
+
+                        <div class="form-group row mb-0">
+                            <div class="col-md-6 offset-md-4">
+                                <button type="submit" class="btn btn-primary">
+                                    Send Password Reset Link
+                                </button>
+                            </div>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>

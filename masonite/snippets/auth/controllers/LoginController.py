@@ -1,8 +1,9 @@
 """A LoginController Module."""
 
 from masonite.auth import Auth
-from masonite.request import Request
 from masonite.view import View
+from masonite.request import Request
+from masonite.validation import Validator
 
 
 class LoginController:
@@ -27,7 +28,7 @@ class LoginController:
             return request.redirect('/home')
         return view.render('auth/login', {'app': request.app().make('Application'), 'Auth': auth})
 
-    def store(self, request: Request, auth: Auth):
+    def store(self, request: Request, auth: Auth, validate: Validator):
         """Login the user.
 
         Arguments:
@@ -37,10 +38,22 @@ class LoginController:
         Returns:
             masonite.request.Request -- The Masonite request class.
         """
-        if auth.login(request.input('email'), request.input('password')):
-            return request.redirect('/home')
+        # Retrieve the old email value
+        request.session.flash('email', request.input('email', ''))
 
-        return request.redirect('/login')
+        errors = request.validate(
+            validate.required(['email', 'password']),
+            validate.email('email')
+        )
+
+        if errors:
+            return request.back().with_errors(errors)
+
+        if auth.login(request.email, request.password):
+            return request.redirect_to('home')
+
+        request.session.flash('message', 'These credentials do not match our records.')
+        return request.redirect_to('login')
 
     def logout(self, request: Request, auth: Auth):
         """Log out the user.
